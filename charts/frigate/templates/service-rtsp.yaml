@@ -1,0 +1,51 @@
+{{- if .Values.service.rtsp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "frigate.fullname" . }}-rtsp
+  labels:
+{{ include "frigate.labels" . | indent 4 }}
+{{- if .Values.service.rtsp.labels }}
+{{ toYaml .Values.service.rtsp.labels | indent 4 }}
+{{- end }}
+{{- with .Values.service.rtsp.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if (or (eq .Values.service.rtsp.type "ClusterIP") (empty .Values.service.rtsp.type)) }}
+  type: ClusterIP
+  {{- if .Values.service.rtsp.clusterIP }}
+  clusterIP: {{ .Values.service.rtsp.clusterIP }}
+  {{end}}
+{{- else if eq .Values.service.rtsp.type "LoadBalancer" }}
+  type: {{ .Values.service.rtsp.type }}
+  {{- if .Values.service.rtsp.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.rtsp.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.service.rtsp.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{ toYaml .Values.service.rtsp.loadBalancerSourceRanges | indent 4 }}
+  {{- end -}}
+{{- else }}
+  type: {{ .Values.service.rtsp.type }}
+{{- end }}
+{{- if .Values.service.rtsp.externalIPs }}
+  externalIPs:
+{{ toYaml .Values.service.rtsp.externalIPs | indent 4 }}
+{{- end }}
+  {{- if .Values.service.rtsp.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.rtsp.externalTrafficPolicy }}
+  {{- end }}
+  ports:
+    - name: rtsp
+      port: {{ .Values.service.rtsp.port }}
+      protocol: TCP
+      targetPort: rtsp
+{{- if (and (eq .Values.service.rtsp.type "NodePort") (not (empty .Values.service.rtsp.nodePort))) }}
+      nodePort: {{.Values.service.rtsp.nodePort}}
+{{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "frigate.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

@@ -113,28 +113,41 @@ probes:
     periodSeconds: 10
 
 service:
-  # -- Type of Service to use
-  type: ClusterIP
-  # -- Port the Service should communicate on
-  port: 5000
-  ## Specify the nodePort value for the LoadBalancer and NodePort service types.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  ##
-  # nodePort:
-  ## Provide any additional annotations which may be required. This can be used to
-  ## set the LoadBalancer service type to internal only.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
-  ##
-  annotations: {}
-  labels: {}
+  main:
+    type: ClusterIP
+    ## Set the externalTrafficPolicy in the Service to either Cluster or Local
+    # externalTrafficPolicy: Cluster
+    annotations: {}
+    labels: {}
+    # -- Set specific IP address for LoadBalancer. `service.type` must be set to `LoadBalancer`
+    loadBalancerIP:
 
-  # -- Set specific IP address for LoadBalancer. `service.type` must be set to `LoadBalancer`
-  loadBalancerIP:
+    loadBalancerSourceRanges: []
 
-  # loadBalancerSourceRanges: []
-  ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  # externalTrafficPolicy: Cluster
-
+    ports:
+      http:
+        # -- Type of Service to use
+        # type: ClusterIP
+        # -- Port the Service should communicate on
+        port: 5000
+        ## Specify the nodePort value for the LoadBalancer and NodePort service types.
+        ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+        ##
+        # nodePort:
+        ## Provide any additional annotations which may be required. This can be used to
+        ## set the LoadBalancer service type to internal only.
+        ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+        ##      
+      rtmp:
+        port: 1935
+  rtsp:
+    annotations: {}
+    labels: {}
+    loadBalancerIP:
+    loadBalancerSourceRanges: []
+    type: NodePort
+    enabled: true
+    port: 8554
 ingress:
   # -- Enables the use of an Ingress Controller to front the Service and can provide HTTPS
   enabled: false
