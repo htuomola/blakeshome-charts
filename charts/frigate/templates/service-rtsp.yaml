@@ -38,12 +38,26 @@ spec:
   externalTrafficPolicy: {{ .Values.service.rtsp.externalTrafficPolicy }}
   {{- end }}
   ports:
-    - name: rtsp
+    - name: rtsp-tcp
       port: {{ .Values.service.rtsp.port }}
       protocol: TCP
       targetPort: rtsp
 {{- if (and (eq .Values.service.rtsp.type "NodePort") (not (empty .Values.service.rtsp.nodePort))) }}
       nodePort: {{.Values.service.rtsp.nodePort}}
+{{- end }}
+    - name: rtsp-udp
+      port: {{ .Values.service.rtsp.port }}
+      protocol: UDP
+      targetPort: rtsp
+{{- if (and (eq .Values.service.rtsp.type "NodePort") (not (empty .Values.service.rtsp.nodePort))) }}
+      nodePort: {{.Values.service.rtsp.nodePort}}
+{{- end }}
+    - name: go2rtc-api
+      port: 1984
+      protocol: TCP
+      targetPort: go2rtc-api
+{{- if (eq .Values.service.rtsp.type "NodePort") }}
+      nodePort: 1984
 {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "frigate.name" . }}

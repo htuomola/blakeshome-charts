@@ -51,13 +51,16 @@ spec:
               containerPort: 1935
               protocol: TCP
             {{- if .Values.service.rtsp.enabled }}
-            - name: rtsp
-              containerPort: {{ .Values.service.rtsp.port }}
+            - name: rtsp-tcp
+              containerPort: 8555
               protocol: TCP
-            - name: rtsp
-              containerPort: {{ .Values.service.rtsp.port }}
+            - name: rtsp-udp
+              containerPort: 8555
               protocol: UDP
             {{- end }}
+            - name: go2rtc-api
+              containerPort: 1984
+              protocol: TCP
           {{- if .Values.probes.liveness.enabled }}
           livenessProbe:
             httpGet:

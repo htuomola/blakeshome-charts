@@ -147,7 +147,7 @@ service:
     loadBalancerSourceRanges: []
     type: NodePort
     enabled: true
-    port: 8554
+    port: 8555
 ingress:
   # -- Enables the use of an Ingress Controller to front the Service and can provide HTTPS
   enabled: false
