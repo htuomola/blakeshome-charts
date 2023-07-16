@@ -51,10 +51,15 @@ spec:
               containerPort: 1935
               protocol: TCP
             {{- if .Values.service.rtsp.enabled }}
-            - name: rtsp-tcp
+            - name: rtsp
+              containerPort: 8554
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.service.webrtc.enabled }}
+            - name: webrtc-tcp
               containerPort: 8555
               protocol: TCP
-            - name: rtsp-udp
+            - name: webrtc-udp
               containerPort: 8555
               protocol: UDP
             {{- end }}

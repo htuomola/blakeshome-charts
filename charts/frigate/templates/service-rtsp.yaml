@@ -38,19 +38,28 @@ spec:
   externalTrafficPolicy: {{ .Values.service.rtsp.externalTrafficPolicy }}
   {{- end }}
   ports:
-    - name: rtsp-tcp
+    - name: rtsp
       port: {{ .Values.service.rtsp.port }}
       protocol: TCP
       targetPort: rtsp
 {{- if (and (eq .Values.service.rtsp.type "NodePort") (not (empty .Values.service.rtsp.nodePort))) }}
       nodePort: {{.Values.service.rtsp.nodePort}}
 {{- end }}
-    - name: rtsp-udp
-      port: {{ .Values.service.rtsp.port }}
+{{- if .Values.service.rtsp.enabled }}
+    - name: webrtc-tcp
+      port: {{ .Values.service.webrtc.port }}
+      protocol: TCP
+      targetPort: webrtc-tcp
+{{- if (and (eq .Values.service.webrtc.type "NodePort") (not (empty .Values.service.webrtc.nodePort))) }}
+      nodePort: {{.Values.service.webrtc.nodePort}}
+{{- end }}
+    - name: webrtc-udp
+      port: {{ .Values.service.webrtc.port }}
       protocol: UDP
-      targetPort: rtsp
-{{- if (and (eq .Values.service.rtsp.type "NodePort") (not (empty .Values.service.rtsp.nodePort))) }}
-      nodePort: {{.Values.service.rtsp.nodePort}}
+      targetPort: webrtc-udp
+{{- if (and (eq .Values.service.webrtc.type "NodePort") (not (empty .Values.service.webrtc.nodePort))) }}
+      nodePort: {{.Values.service.webrtc.nodePort}}
+{{- end }}
 {{- end }}
     - name: go2rtc-api
       port: 1984
