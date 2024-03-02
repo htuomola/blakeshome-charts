@@ -33,6 +33,18 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      initContainers:
+        - name: create-file-from-configmap
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - echo "$CONFIGMAP_DATA" > /config/config.yml
+          env:
+            - name: CONFIGMAP_DATA
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "frigate.fullname" . }}
+                  key: config.yml
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ include "frigate.imageTag" . }}"
@@ -133,8 +145,8 @@ spec:
             {{- end }}
       volumes:
         - name: config
-          configMap:
-            name: {{ template "frigate.fullname" . }}
+          persistentVolumeClaim:
+            name: {{ if .Values.persistence.config.existingClaim }}{{ .Values.persistence.config.existingClaim }}{{- else }}{{ template "frigate.fullname" . }}-config{{- end }}
         {{- if .Values.coral.enabled }}
         - name: coral-dev
           hostPath:

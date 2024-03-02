@@ -203,6 +203,14 @@ persistence:
 
     # -- Do not delete the pvc upon helm uninstall
     skipuninstall: false
+  config:
+    enabled: true
+    # existingClaim: your-claim
+    accessMode: ReadWriteOnce
+    # -- size/capacity of the PVC
+    size: 1Gi
+    # -- Do not delete the pvc upon helm uninstall
+    skipuninstall: false
 
 # -- Set resource limits/requests for the Pod(s)
 resources: {}
