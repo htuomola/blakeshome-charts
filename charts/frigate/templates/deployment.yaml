@@ -45,6 +45,9 @@ spec:
                 configMapKeyRef:
                   name: {{ template "frigate.fullname" . }}
                   key: config.yml
+          volumeMounts:
+            - mountPath: /config
+              name: config
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ include "frigate.imageTag" . }}"
